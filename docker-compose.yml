@@ -2,19 +2,20 @@ services:
     minio:
         image: minio/minio:latest
         container_name: minio
-        # Official image needs this command to start the server and UI
         command: server /data --console-address ":9001"
         ports:
-            - "9000:9000" # API port
-            - "9001:9001" # Web UI port
+            - "9000:9000"
+            - "9001:9001"
         networks:
             - backend
         volumes:
-            # Official image stores data in /data
             - "minio_data:/data"
         environment:
             - MINIO_ROOT_USER=${MINIO_ACCESS_KEY}
             - MINIO_ROOT_PASSWORD=${MINIO_SECRET_KEY}
+            # ADD THESE TWO LINES:
+            - MINIO_SERVER_URL=${MINIO_SERVER_URL}
+            - MINIO_BROWSER_REDIRECT_URL=${MINIO_BROWSER_REDIRECT_URL}
         healthcheck:
             test:
                 ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
@@ -47,4 +48,3 @@ networks:
 
 volumes:
     minio_data:
-  
